@@ -1,0 +1,25 @@
+{
+    "items": [
+        {
+            "bluetoothID": "256-785-AF8-3SD",
+            "itemType": "box"
+        },
+        {
+            "bluetoothID": "246-725-ZH8-3SD",
+            "itemType": "shippingContainer"
+        },
+        {
+            "bluetoothID": "236-7F5-AF8-4S8",
+            "itemType": "trailer"
+        },
+        {
+            "bluetoothID": "237-8F5-BB8-4S8",
+            "itemType": "truck"
+        },
+        {
+            "bluetoothID": "243-7F5-AF9-960",
+            "itemType": "box"
+        }
+    ]
+}
+
