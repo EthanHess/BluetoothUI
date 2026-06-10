@@ -9,6 +9,33 @@ import UIKit
 import SwiftUI
 
 
+@Observable
+final class RowHelper {
+    let tile: BLETile
+    let service: any RowProvider
+    
+    private var isLoading = false //Prevent against duplicate calls
+    
+    var loadState: LoadState<Image> = .idle
+    
+    init(tile: BLETile, service: any RowProvider) {
+        self.tile = tile
+        self.service = service
+    }
+    
+    func loadData() async {
+        guard case .idle = loadState else { return }
+        loadState = .loading
+
+        let image = await service.fetchImage(id: tile.bluetoothID)
+
+        //This is current context Task (like inside .task { } called on view)
+        if Task.isCancelled { return }
+
+        loadState = .loaded(image)
+    }
+}
+
 
 //MARK: As of iOS + @Observable it can be useful to have a model for the whole list
 
@@ -39,49 +66,15 @@ extension RowService : RowProvider {
             return "Failed"
         }
     }
-    
-    //MARK: TODO fill
+
     func fetchImage(id: String) async -> Image {
         do {
-            return try await fetchImageData(id: id) ?? Image("")
+            return try await fetchImageData(id: id) ?? Image(systemName: "questionmark.circle.fill")
         } catch {
-            return Image("") //Should ideally return a system image but you get the idea :)
+            return Image(systemName: "questionmark.circle.fill")
         }
     }
 }
-
-
-//MARK: -- Separate, but still using row service --
-
-
-@Observable
-final class RowHelper {
-    let tile: BLETile
-    let service: any RowProvider
-    
-    private var isLoading = false //Prevent against duplicate calls
-    
-    var loadState: LoadState<Image> = .idle
-    
-    init(tile: BLETile, service: any RowProvider) {
-        self.tile = tile
-        self.service = service
-    }
-    
-    func loadData() async {
-        guard case .idle = loadState else { return }
-        loadState = .loading
-
-        let image = await service.fetchImage(id: tile.bluetoothID)
-
-        //This is current context Task (like inside .task { } called on view)
-        if Task.isCancelled { return }
-
-        loadState = .loaded(image)
-    }
-}
-
-
 
 
 //MARK: For Row VM (experimenting with generics)

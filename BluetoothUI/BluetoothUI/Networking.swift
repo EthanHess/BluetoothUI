@@ -9,33 +9,13 @@ import SwiftUI
 
 //MARK: iOS 17+ way to do observe published data
 
-//@DataActor //custom global actor ensuring thread safety
-
-@MainActor
-@Observable
-class BluetoothViewModel {
-    var tiles : [BLETile] = []
-    var loading = false
-    
-    private let service: BLETileService
-    
-    init(service: BLETileService) {
-        self.service = service
-    }
-    
-    func loadTiles() async {
-        loading = true
-        do {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            tiles = try await service.fetchJSON()
-            loading = false
-        } catch {
-            //MARK: Present error UI in app state (like internet connections etc.)
-            loading = false
-        }
-    }
+//@DataActor -> custom global actor ensuring thread safety (can wrap models)
+@globalActor actor DataActor {
+    static let shared = DataActor()
 }
 
+
+//MARK: JSON
 struct JSONFileWrapper: Decodable {
     let items: [BLETile] //tiles are nested in "items" key so can do this
 }
@@ -61,8 +41,6 @@ final class BLETileService : ServiceProtocol {
     }
 }
 
-
-//MARK: Move this
 struct API {
     static func tilesURL() throws -> URL {
         guard let url = URL(string: "https://bleservice.com/tiles") else {
@@ -79,20 +57,6 @@ struct API {
     }
 }
 
-
-
-
-
-//MARK: Old stuff
-
-struct Tile : Identifiable {
-    var id = UUID()
-    var bluetoothID : String
-    var itemType : ItemType
-    
-    //MARK: TODO Add / observe current location (CLLocation)
-}
-
 enum ItemType: String, Codable {
     case shippingContainer
     case crate
@@ -100,14 +64,6 @@ enum ItemType: String, Codable {
     case trailer
     case truck
 }
-
-
-//MARK: If we wrap our network in this we'd want a middleman
-@globalActor actor DataActor {
-    static let shared = DataActor()
-}
-
-
 
 
 //MARK: May need to add this to bypass security

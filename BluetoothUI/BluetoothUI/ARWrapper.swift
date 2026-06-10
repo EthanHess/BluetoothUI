@@ -12,7 +12,7 @@ import ARKit
 
 //MARK: UIViewRepresentable example (can do more this way than with plain RealityView)
 
-//Add MapView here
+//Can also use for map but this will be good for ARView
 
 //SwiftUI parent -> UIView subclass
 struct ARWrapperContainer: UIViewRepresentable {

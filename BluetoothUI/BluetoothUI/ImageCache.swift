@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-//MARK: AI suggestion (tracking tasks that are in flight)
-//Preventing duplication
+//MARK: AI suggestion to my original cache actor (tracking tasks that are in flight, that logic could also be done outside but in this case is consolidated here)
 
 actor ImageCache {
     static let shared = ImageCache()
@@ -16,7 +15,8 @@ actor ImageCache {
     private var storage: [String: Image] = [:]
     private var inFlight: [String: Task<Image?, Never>] = [:] //prevent duplicate requests
 
-    //@escaping may be unecessary here, try without (or remove closure entirely)
+    //MARK: @escaping may be unecessary here, try without (or remove closure entirely)
+    
     func imageForKey(for key: String, fetch: @escaping () async -> Image?) async -> Image? {
         if let cached = storage[key] { return cached }
             

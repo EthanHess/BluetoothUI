@@ -28,7 +28,8 @@ struct ContentView: View {
   
     @State private var bleViewModel : BluetoothViewModel
     
-    //MARK: Service for row since "prepareForReuse" isn't a thing
+    //MARK: Service for row since UIKit "prepareForReuse" isn't a thing in SwiftUI, that logic will be handled elsewhere
+    
     private let service = RowService()
     
     init(service: BLETileService) {
@@ -43,7 +44,6 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            //More flexibility for custom layouts
             if bleViewModel.loading == true {
                 ZStack {
                     RealityView { content in
@@ -63,7 +63,7 @@ struct ContentView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(bleViewModel.tiles) { tile in
-                            TileRowVM(tile: tile, service: service).onAppear {
+                            TileRow(tile: tile, service: service).onAppear {
                                 if tile.id == bleViewModel.tiles.last?.id {
                                     //MARK: TODO load more here
                                 }
@@ -83,48 +83,7 @@ struct ContentView: View {
     }
 }
 
-//MARK: Row view model example
 
-struct TileRowVM : View {
-    
-    @State private var helper: RowHelper
-    
-    init(tile: BLETile, service: any RowProvider) {
-        _helper = State(
-            initialValue: RowHelper(tile: tile, service: service)
-        )
-    }
-    
-    @ViewBuilder
-    private var content: some View {
-        switch helper.loadState {
-        case .idle, .loading:
-            ProgressView()
-        case .loaded(let image):
-            image.resizable()
-        case .failed:
-            Image(systemName: "xmark.circle")
-        }
-    }
-    
-    //MARK: Add to modifiers, this is ugly 
-    var body: some View {
-        HStack {
-            Text(helper.tile.itemType)
-            content
-        }.customBackground()
-        .task(id: helper.tile.bluetoothID) {
-            await helper.loadData()
-        }
-    }
-}
-
-
-
-
-
-
-//Better to just delete this?
 #Preview {
     ContentView(service: BLETileService())
 }
