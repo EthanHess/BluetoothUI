@@ -8,7 +8,7 @@
 import RealityKit
 import SwiftUI
 
-//TODO add stars + Earth texture
+//TODO add stars + Earth texture (Use RC pro models to look cooler?)
 
 struct SatelliteFactory {
     static func createSatelliteScene() -> [ModelEntity] {

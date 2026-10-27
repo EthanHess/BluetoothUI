@@ -69,10 +69,11 @@ struct ContentView: View {
                                 }
                             }
                         }
-                    }.background(
-                        Color.black
+                    }.padding().background(
+                        //MARK: add this to extension file + custom colors
+                        LinearGradient(colors: [Color(uiColor: .darkGray), Color(uiColor: .systemGray)], startPoint: .top, endPoint: .bottom)
                     ).cornerRadius(5)
-                }
+                }.padding()
             }
         }.task {
             await bleViewModel.loadTiles()

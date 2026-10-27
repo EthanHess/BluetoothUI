@@ -49,7 +49,7 @@ struct RowService {
     func fetchImageData(id: String) async throws -> Image? {
         try? await Task.sleep(nanoseconds: 1_500_000_000)
         if Bool.random() { throw NetworkError.failedRequest }
-        return Image("checkmark.circle")
+        return Image(systemName: "checkmark.circle")
     }
 }
 

@@ -32,8 +32,9 @@ struct TileRow : View {
     var body: some View {
         HStack {
             Text(helper.tile.itemType)
+            Spacer()
             content
-        }.customBackground()
+        }.frame(maxWidth: .infinity, alignment: .leading).padding().customBackground()
         .task(id: helper.tile.bluetoothID) {
             await helper.loadData()
         }
