@@ -12,21 +12,49 @@ import SwiftUI
 
 struct SatelliteFactory {
     static func createSatelliteScene() -> [ModelEntity] {
-        var returnArr : [ModelEntity] = []
+         var returnArr : [ModelEntity] = []
         let stl = Satellite()
         stl.entity.position = [0, 0, -50]
         returnArr.append(stl.entity)
         
-        //Earth
-        let sphere = MeshResource.generateSphere(radius: 100)
-        let sMaterial = SimpleMaterial(color: .blue, roughness: 1, isMetallic: false)
-        let sEntity = ModelEntity(mesh: sphere, materials: [sMaterial])
-        sEntity.position = [0, -100, -200]
-        returnArr.append(sEntity)
+        //MARK: Reality Composer Pro test :)
+        
+        do {
+            let earth = try Entity.load(named: "Earth")
+            let models = extractModels(from: earth) //currently just contains earth
+            
+            for model in models { //If we add to scene change this and there's definitely a better way to do this (which is just a test)
+                
+                model.position = [0, -100, -200]
+                model.scale = [975.6, 975.6, 975.6]
+                returnArr.append(model)
+            }
+            
+            returnArr.append(contentsOf: models)
+        } catch {
+            print("Failed to load earth")
+        }
         
         return returnArr
     }
+    
+    
+    static func extractModels(from entity: Entity) -> [ModelEntity] {
+        var models: [ModelEntity] = []
+
+        if let model = entity as? ModelEntity {
+            models.append(model)
+        }
+
+        for child in entity.children {
+            models.append(contentsOf: extractModels(from: child))
+        }
+
+        return models
+    }
 }
+
+
 
 
 @available(iOS 18.0, *)

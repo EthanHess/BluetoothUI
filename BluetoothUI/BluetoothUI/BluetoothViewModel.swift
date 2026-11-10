@@ -22,7 +22,7 @@ class BluetoothViewModel {
     func loadTiles() async {
         loading = true
         do {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
             tiles = try await service.fetchJSON()
             loading = false
         } catch {
